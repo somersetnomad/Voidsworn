@@ -1,25 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
-
-interface RunRow {
-  id: string;
-  name: string;
-  patron: string;
-  floor: number;
-  kills: number;
-  score: number;
-  victory: boolean;
-  createdAt: string;
-}
-
-const PATRON_EMOJI: Record<string, string> = {
-  fiend: "🔥",
-  goo: "🐙",
-  archfey: "🌙",
-  hexblade: "⚔️",
-};
 
 const TITLE = "VOIDSWORN";
 const RUNES = "ᚠ ᚢ ᚦ ᚨ ᚱ ᚲ ᚷ ᚹ ✦ ᚺ ᚾ ᛁ ᛃ ᛇ ᛈ ᛉ ᛊ ✦ ᛏ ᛒ ᛖ ᛗ ᛚ ᛜ ᛞ ᛟ ✦ ";
@@ -77,27 +59,11 @@ const BETTER_LIST = [
   ["Eldritch Invocations", "Level up and carve your build: Agonizing Blast, Thirsting Blade, Maddening Hex, and more."],
   ["Dark Bargains", "At every stairway your patron offers power for pieces of you. Refuse — if you dare."],
   ["Telegraphed dragonfire", "Vermithrax gathers flame one turn before the burn. Brace, evade, or become a cautionary tale."],
-  ["The Fallen Constellation", "Every run becomes a star. The void remembers everyone who signed."],
+  ["Five fathoms deep", "Branching rooms, events, treasure caches and rest stops — no two falls through the void play the same."],
 ];
 
 export function TitleScreen({ onStart }: { onStart: () => void }) {
-  const [runs, setRuns] = useState<RunRow[] | null>(null);
   const [showBetter, setShowBetter] = useState(false);
-
-  useEffect(() => {
-    let alive = true;
-    fetch("/api/runs")
-      .then((r) => (r.ok ? r.json() : Promise.reject(new Error("no runs"))))
-      .then((data) => {
-        if (alive) setRuns((data.runs ?? []) as RunRow[]);
-      })
-      .catch(() => {
-        if (alive) setRuns([]);
-      });
-    return () => {
-      alive = false;
-    };
-  }, []);
 
   return (
     <div className="relative mx-auto flex min-h-screen w-full max-w-5xl flex-col items-center justify-center gap-10 px-4 py-16">
@@ -171,41 +137,6 @@ export function TitleScreen({ onStart }: { onStart: () => void }) {
         </div>
       )}
 
-      {/* hall of fallen warlocks */}
-      <div className="w-full">
-        <h2 className="mb-4 text-center font-display text-xs uppercase tracking-[0.5em] text-cyan-200/60">
-          ✧ The Fallen Constellation ✧
-        </h2>
-        {runs === null ? (
-          <p className="text-center text-xs text-slate-600">Reading the stars…</p>
-        ) : runs.length === 0 ? (
-          <p className="text-center text-xs italic text-slate-600">
-            The sky is still empty. Be the first star it remembers.
-          </p>
-        ) : (
-          <div className="mx-auto max-h-56 max-w-2xl space-y-1.5 overflow-y-auto game-scroll pr-2">
-            {runs.map((r, i) => (
-              <div
-                key={r.id}
-                className="choice-card rise-in flex items-center justify-between gap-3 rounded-xl border border-white/5 bg-[oklch(0.15_0.04_280/0.55)] px-4 py-2 text-sm hover:border-violet-300/30"
-                style={{ animationDelay: `${i * 0.04}s` }}
-              >
-                <span className="flex min-w-0 items-center gap-2">
-                  <span className="w-5 text-right font-display text-xs text-cyan-300">{i + 1}</span>
-                  <span>{PATRON_EMOJI[r.patron] ?? "🧿"}</span>
-                  <span className="truncate font-semibold text-slate-200">{r.name}</span>
-                  {r.victory && <span title="Slew the dragon" className="drop-shadow-[0_0_6px_rgba(252,211,77,0.9)]">🐉</span>}
-                </span>
-                <span className="flex shrink-0 items-center gap-3 text-xs text-slate-400">
-                  <span>F{r.floor}</span>
-                  <span>☠ {r.kills}</span>
-                  <span className="font-bold text-amber-300/90">{r.score}</span>
-                </span>
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
     </div>
   );
 }

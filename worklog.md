@@ -38,3 +38,16 @@ Work Log:
 - Fixed Rest screen label (said 45% heal, reducer heals 60%)
 - prefers-reduced-motion respected
 - Game logic untouched; tsc clean; lint shows only the 2 pre-existing shadcn errors
+
+---
+Task ID: 3
+Agent: Claude
+Task: Remove the leaderboard, make the game fully static, add favicons
+
+Work Log:
+- Removed the leaderboard: /api routes, Prisma schema and client, SQLite db, the Fallen Constellation list on the title screen and run-saving on the end screen (score still shown)
+- Removed server-only packages (prisma, @prisma/client, next-auth, z-ai-web-dev-sdk) and old platform scaffolding (.zscripts, tests, mini-services, examples, Caddyfile)
+- Switched Next.js to static export (output: "export"); base path comes from PAGES_BASE_PATH so it works both locally and at /Voidsworn on GitHub Pages; type errors no longer ignored at build
+- Added GitHub Actions workflow that builds and deploys to Pages on every push to main
+- Favicons: SVG icon, multi-size favicon.ico (16/32/48), 180px Apple touch icon, 512px app icon and a web manifest with theme colour
+- Verified: tsc and lint clean, static build succeeds, site served under /Voidsworn/ loads with zero errors or failed requests and plays into combat

@@ -1,6 +1,5 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { getInvocation, getPatron } from "@/lib/game/content";
 import type { Action } from "@/lib/game/reducer";
@@ -25,30 +24,6 @@ export function EndScreen({
 }) {
   const victory = state.phase === "victory";
   const score = computeScore(state, victory);
-  const savedRef = useRef(false);
-  const [saved, setSaved] = useState(false);
-
-  useEffect(() => {
-    if (savedRef.current) return;
-    savedRef.current = true;
-    fetch("/api/runs", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        name: state.warlock.name,
-        patron: state.warlock.patron,
-        floor: state.floor,
-        kills: state.warlock.kills,
-        gold: state.warlock.gold,
-        score,
-        victory,
-        cause: victory ? "Slew Vermithrax, the Ember-Sovereign" : state.deathCause || "The dungeon claimed another",
-      }),
-    })
-      .then(() => setSaved(true))
-      .catch(() => setSaved(false));
-  }, [state.warlock.name, state.warlock.patron, state.warlock.kills, state.warlock.gold, state.floor, score, victory, state.deathCause]);
-
   const patron = getPatron(state.warlock.patron);
   const stat = (label: string, value: string | number) => (
     <div className="choice-card rounded-xl border border-cyan-300/15 bg-black/30 px-3 py-2.5 text-center hover:border-cyan-300/40">
@@ -98,10 +73,6 @@ export function EndScreen({
             {state.warlock.invocations.map((id) => getInvocation(id).name).join(" · ")}
           </p>
         )}
-
-        <p className="mt-4 text-[11px] italic text-slate-600">
-          {saved ? "✦ Your star now burns in the Fallen Constellation." : "The stars are still aligning…"}
-        </p>
 
         <div className="mt-6 flex flex-col gap-3 sm:flex-row">
           <Button
