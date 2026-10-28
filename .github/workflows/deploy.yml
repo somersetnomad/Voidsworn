@@ -4,6 +4,12 @@ on:
   push:
     branches: [main]
   workflow_dispatch:
+  # If the repo's Pages source is still "Deploy from a branch", GitHub runs its
+  # own build after every push and publishes the README over the game.
+  # Re-deploy once that finishes so the game is always what's live.
+  workflow_run:
+    workflows: ["pages build and deployment"]
+    types: [completed]
 
 permissions:
   contents: read
